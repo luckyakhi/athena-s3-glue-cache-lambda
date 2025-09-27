@@ -52,7 +52,12 @@ resource "aws_s3_bucket" "athena_results" {
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "athena_results" {
   bucket = aws_s3_bucket.athena_results.id
-  rule { apply_server_side_encryption_by_default { sse_algorithm = "AES256" } }
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "athena_results" {
@@ -124,7 +129,17 @@ resource "aws_elasticache_serverless_cache" "redis" {
   subnet_ids           = [aws_subnet.private_a.id, aws_subnet.private_b.id]
   security_group_ids   = [aws_security_group.redis.id]
   major_engine_version = "7"
-  cache_usage_limits { data_storage { maximum = 1, unit = "GB" } ecpu_per_second { maximum = 1000 } }
+
+  cache_usage_limits {
+    data_storage {
+      maximum = 1
+      unit    = "GB"
+    }
+
+    ecpu_per_second {
+      maximum = 1000
+    }
+  }
 }
 
 # VPC Endpoints
