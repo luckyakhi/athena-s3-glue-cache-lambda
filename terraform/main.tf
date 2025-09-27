@@ -87,11 +87,18 @@ resource "aws_glue_catalog_table" "table" {
       serialization_library = "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"
       parameters = { "serialization.format" = "1" }
     }
-    columns = [
-      { name = "id",    type = "int"    },
-      { name = "name",  type = "string" },
-      { name = "value", type = "double" }
-    ]
+    columns {
+      name = "id"
+      type = "int"
+    }
+    columns {
+      name = "name"
+      type = "string"
+    }
+    columns {
+      name = "value"
+      type = "double"
+    }
   }
   parameters = { EXTERNAL = "TRUE", classification = "parquet", "parquet.compression" = "SNAPPY" }
 }
