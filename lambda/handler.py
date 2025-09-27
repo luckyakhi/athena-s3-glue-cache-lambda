@@ -2,7 +2,8 @@ import os, json, time, hashlib
 import boto3
 import redis
 
-REGION    = os.environ.get("AWS_REGION")
+REGION = boto3.session.Session().region_name
+
 WG        = os.environ.get("ATHENA_WG")
 DB        = os.environ.get("GLUE_DB")
 S3_OUTPUT = os.environ.get("S3_OUTPUT")

@@ -251,13 +251,12 @@ resource "aws_lambda_function" "proxy" {
 
   environment {
     variables = {
-      AWS_REGION  = var.region
-      ATHENA_WG   = aws_athena_workgroup.wg.name
-      GLUE_DB     = aws_glue_catalog_database.db.name
-      S3_OUTPUT   = "s3://${aws_s3_bucket.athena_results.bucket}/results/"
-      REDIS_HOST  = aws_elasticache_serverless_cache.redis.endpoint[0].address
-      REDIS_PORT  = "6379"
-      CACHE_TTL   = "300"
+      ATHENA_WG  = aws_athena_workgroup.wg.name
+      GLUE_DB    = aws_glue_catalog_database.db.name
+      S3_OUTPUT  = "s3://${aws_s3_bucket.athena_results.bucket}/results/"
+      REDIS_HOST = aws_elasticache_serverless_cache.redis.endpoint[0].address
+      REDIS_PORT = "6379"
+      CACHE_TTL  = "300"
     }
   }
 
