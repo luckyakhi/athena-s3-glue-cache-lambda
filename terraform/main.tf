@@ -3,7 +3,8 @@
 ############################################
 terraform {
   required_providers {
-    aws = { source = "hashicorp/aws", version = ">= 5.50" }
+    aws  = { source = "hashicorp/aws", version = ">= 5.50" }
+    time = { source = "hashicorp/time", version = ">= 0.10.0" }
   }
 }
 
@@ -239,6 +240,15 @@ resource "aws_iam_role_policy" "lambda_inline" {
   })
 }
 
+# Give IAM role attachments time to propagate before Lambda creation
+resource "time_sleep" "wait_for_lambda_role" {
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda_vpc_access,
+    aws_iam_role_policy.lambda_inline
+  ]
+  create_duration = "10s"
+}
+
 # Lambda function
 data "archive_file" "lambda_zip" {
   type        = "zip"
@@ -252,6 +262,7 @@ resource "aws_lambda_function" "proxy" {
   handler       = "handler.handler"
   runtime       = "python3.12"
   filename      = data.archive_file.lambda_zip.output_path
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   memory_size   = 256
   timeout       = 60
 
@@ -270,6 +281,8 @@ resource "aws_lambda_function" "proxy" {
     subnet_ids         = [aws_subnet.private_a.id, aws_subnet.private_b.id]
     security_group_ids = [aws_security_group.lambda.id]
   }
+
+  depends_on = [time_sleep.wait_for_lambda_role]
 }
 
 # API Gateway HTTP API
