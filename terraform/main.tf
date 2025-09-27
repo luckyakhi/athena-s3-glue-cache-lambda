@@ -9,6 +9,10 @@ terraform {
 
 provider "aws" {
   region = var.region
+  assume_role {
+    role_arn     = "arn:aws:iam::273505519511:role/TerraformProvisioner"
+    session_name = "tf-setup"
+  }
 }
 
 variable "region"      { default = "ap-south-1" }
