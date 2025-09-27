@@ -12,6 +12,8 @@ terraform apply -auto-approve
 ## Upload sample Parquet
 ```bash
 # Produce/obtain a Parquet with columns: id:int, name:string, value:double
+aws sts get-caller-identity --profile demo-tf
+aws s3 cp sample.parquet s3://demoaks-data-273505519511/parquet/ --profile demo-tf
 aws s3 cp ./sample.parquet s3://$(terraform -chdir=terraform output -raw data_bucket)/parquet/
 ```
 
@@ -24,8 +26,12 @@ curl -s -X POST "$API/query" -H "content-type: application/json"   -d '{"sql":"S
 
 ## Destroy
 ```bash
+aws sts assume-role --role-arn arn:aws:iam::273505519511:role/TerraformProvisioner --role-session-name akhi-tf-session
+
+./cleanup.sh
 cd terraform
 terraform destroy -auto-approve
+
 ```
 
 ### Notes
