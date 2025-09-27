@@ -217,6 +217,12 @@ resource "aws_iam_role" "lambda" {
     Statement = [{ Effect="Allow", Principal={ Service="lambda.amazonaws.com" }, Action="sts:AssumeRole" }]
   })
 }
+# Attach the standard VPC access policy so Lambda can create ENIs
+resource "aws_iam_role_policy_attachment" "lambda_vpc_access" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
 resource "aws_iam_role_policy" "lambda_inline" {
   name = "${var.name_prefix}-lambda-inline"
   role = aws_iam_role.lambda.id
