@@ -1,0 +1,5 @@
+api_endpoint = "https://8opo51ogmd.execute-api.ap-south-1.amazonaws.com"
+athena_results_bucket = "demoaks-athena-results-273505519511"
+athena_workgroup = "demoaks_wg"
+data_bucket = "demoaks-data-273505519511"
+glue_db = "demoaks_demo_db"
