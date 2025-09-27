@@ -110,16 +110,34 @@ resource "aws_athena_workgroup" "wg" {
 }
 
 # SGs
-resource "aws_security_group" "lambda" { 
-  name = "${var.name_prefix}-lambda-sg"
+resource "aws_security_group" "lambda" {
+  name   = "${var.name_prefix}-lambda-sg"
   vpc_id = aws_vpc.main.id
-  egress { from_port = 0 to_port = 0 protocol = "-1" cidr_blocks = ["0.0.0.0/0"] }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 resource "aws_security_group" "redis" {
-  name = "${var.name_prefix}-redis-sg"
+  name   = "${var.name_prefix}-redis-sg"
   vpc_id = aws_vpc.main.id
-  ingress { from_port = 6379 to_port = 6379 protocol = "tcp" security_groups = [aws_security_group.lambda.id] }
-  egress  { from_port = 0 to_port = 0 protocol = "-1" cidr_blocks = ["0.0.0.0/0"] }
+
+  ingress {
+    from_port       = 6379
+    to_port         = 6379
+    protocol        = "tcp"
+    security_groups = [aws_security_group.lambda.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 # Redis serverless
@@ -144,10 +162,22 @@ resource "aws_elasticache_serverless_cache" "redis" {
 
 # VPC Endpoints
 resource "aws_security_group" "vpce" {
-  name = "${var.name_prefix}-vpce-sg"
+  name   = "${var.name_prefix}-vpce-sg"
   vpc_id = aws_vpc.main.id
-  ingress { from_port = 443 to_port = 443 protocol = "tcp" security_groups = [aws_security_group.lambda.id] }
-  egress  { from_port = 0 to_port = 0 protocol = "-1" cidr_blocks = ["0.0.0.0/0"] }
+
+  ingress {
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
+    security_groups = [aws_security_group.lambda.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 # S3 Gateway endpoint (no routes used here; Lambda SDK uses S3 via VPC gateway)
