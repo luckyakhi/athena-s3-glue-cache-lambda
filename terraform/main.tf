@@ -129,10 +129,43 @@ resource "aws_security_group" "lambda" {
   vpc_id = aws_vpc.main.id
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    description    = "Allow Redis access"
+    from_port      = 6379
+    to_port        = 6379
+    protocol       = "tcp"
+    security_groups = [aws_security_group.redis.id]
+  }
+
+  egress {
+    description    = "Allow HTTPS to interface VPC endpoints"
+    from_port      = 443
+    to_port        = 443
+    protocol       = "tcp"
+    security_groups = [aws_security_group.vpce.id]
+  }
+
+  egress {
+    description   = "Allow HTTPS to S3 via gateway endpoint"
+    from_port     = 443
+    to_port       = 443
+    protocol      = "tcp"
+    prefix_list_ids = [aws_vpc_endpoint.s3.prefix_list_id]
+  }
+
+  egress {
+    description = "Allow DNS resolution in the VPC"
+    from_port   = 53
+    to_port     = 53
+    protocol    = "udp"
+    cidr_blocks = ["${cidrhost(aws_vpc.main.cidr_block, 2)}/32"]
+  }
+
+  egress {
+    description = "Allow TCP DNS resolution fallback"
+    from_port   = 53
+    to_port     = 53
+    protocol    = "tcp"
+    cidr_blocks = ["${cidrhost(aws_vpc.main.cidr_block, 2)}/32"]
   }
 }
 resource "aws_security_group" "redis" {
