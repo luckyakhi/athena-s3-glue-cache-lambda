@@ -111,6 +111,8 @@ resource "aws_glue_catalog_table" "table" {
 # Athena workgroup
 resource "aws_athena_workgroup" "wg" {
   name = "${var.name_prefix}_wg"
+  # allow deletion even if it contains named queries, notebooks, etc.
+  force_destroy = true
   configuration {
     enforce_workgroup_configuration = true
     result_configuration {

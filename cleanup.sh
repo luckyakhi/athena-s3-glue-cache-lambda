@@ -11,10 +11,7 @@ RES=$(terraform output -raw athena_results_bucket 2>/dev/null || true)
 terraform destroy -auto-approve || true
 
 # Extra nudge for Lambda-in-VPC variant:
-aws ec2 describe-network-interfaces \
-  --filters Name=description,Values="AWS Lambda VPC ENI*" \
-  --query "NetworkInterfaces[].NetworkInterfaceId" --output text 2>/dev/null \
-  | xargs -r -n1 aws ec2 delete-network-interface --network-interface-id || true
+aws ec2 describe-network-interfaces --filters Name=description,Values="AWS Lambda VPC ENI*"  --query "NetworkInterfaces[].NetworkInterfaceId" --output text 2>/dev/null \ | xargs -r -n1 aws ec2 delete-network-interface --network-interface-id || true
 
 terraform destroy -auto-approve || true
 popd >/dev/null
